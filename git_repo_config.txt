@@ -1,0 +1,22 @@
+Mit Ihrem Repository arbeiten
+Ich möchte dieses Repository nur klonen
+Wenn Sie dieses leere Repository einfach klonen möchten, führen Sie diesen Befehl mit Ihrem Git-Client aus.
+
+git clone ssh://git@bitbucket.webapp.sdst.sbaintern.de:2222/egov/sample-batch.git
+Mein Code ist bereit zum Pushen
+Wenn Sie schon Code bereit haben, um ihn in dieses Repository zu schieben, führen Sie dies in Ihrem Terminal aus.
+
+cd existing-project
+git init
+git add --all
+git commit -m "Initial Commit"
+git remote add origin ssh://git@bitbucket.webapp.sdst.sbaintern.de:2222/egov/sample-batch.git
+git push -u origin master
+Mein Code wird bereits von Git getrackt
+Wenn Ihr Code schon von Git getrackt wird, so setzen Sie dieses Repository als Ihr "Original", zu dem zu pushen ist.
+
+cd existing-project
+git remote set-url origin ssh://git@bitbucket.webapp.sdst.sbaintern.de:2222/egov/sample-batch.git
+git push -u origin --all
+git push origin --tags
+
