@@ -1,8 +1,4 @@
-/*
- * Copyright (c) 2019 Bundesagentur fuer Arbeit. All Rights Reserved.
- *
- */
-package de.ba.egov.batch.processing;
+package de.hock.batch.processing;
 
 import java.util.Properties;
 
@@ -14,7 +10,7 @@ import org.jberet.runtime.JobExecutionImpl;
 /**
  *
  *
- * @author <a href="mailto:Mojammal.Hock2@arbeitsagentur.de">Mojammal Hock</a>
+ * @author <a href="mailto:Mojammal.Hock@gmail.com">Mojammal Hock</a>
  */
 public class JobStarter {
 

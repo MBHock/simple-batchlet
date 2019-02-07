@@ -21,7 +21,7 @@
 		<jta-version>1.1</jta-version>
 		<wildfly-version>1.1.2.Final</wildfly-version>
 		<main.class>org.jberet.se.Main</main.class>
-		<!-- <main.class>de.ba.egov.batch.processing.JobStarter</main.class> -->
+		<!-- <main.class>JobStarter</main.class> -->
 	</properties>
 
 	<dependencies>
