@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <job id="batchletjob" xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
    <properties>
-        <property name="outputDirectory" value="/Users/"/>
+        <property name="outputDirectory" value="/Users/mojammalhock/tmp"/>
         <property name="numberOfLines" value="10000"/>
     </properties>
     <step id="testBatchlet">
