@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <job id="batchletjob" xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
-   <properties>
-        <property name="outputDirectory" value="/Users/mojammalhock/tmp"/>
+    <properties>
+        <property name="outputDirectory" value="/Users/mojammalhock/tmp/out"/>
+        <property name="inputDirectory" value="/Users/mojammalhock/tmp/in"/>
+        <property name="logDirectory" value="/Users/mojammalhock/tmp/log"/>
+        <property name="numberOfPartitions" value="10"/>
         <property name="numberOfLines" value="10000"/>
     </properties>
     <step id="testBatchlet">
-        <batchlet ref="TestBatchlet"/>
+        <batchlet ref="TestBatchlet">
+            <properties>
+                <property name="outputFilename" value="#{partitionPlan['outputFilename']}"/>
+            </properties>
+        </batchlet>
+        <partition>
+            <mapper ref="simplePartitionMapper"/>
+        </partition>
     </step>
+
 </job>
