@@ -8,6 +8,8 @@ import javax.batch.operations.BatchRuntimeException;
 import javax.batch.operations.JobOperator;
 import javax.batch.runtime.BatchRuntime;
 import javax.batch.runtime.BatchStatus;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,7 +28,7 @@ public class JobStarter {
 //            return;
 //        }
 
-
+        Instant jobStart = Instant.now();
         final java.util.Properties jobParameters = new java.util.Properties();
         for(int i = 1; i < args.length; i++) {
             final int equalSignPos = args[i].indexOf('=');
@@ -55,6 +57,10 @@ public class JobStarter {
         catch(InterruptedException e) {
             throw new BatchRuntimeException(e);
         }
+
+        Instant jobEnd = Instant.now();
+        Duration between = Duration.between(jobStart, jobEnd);
+        System.out.println(String.format("Total job execution time: %s", between));
     }
 
     private static void usage(final String[] args) {
