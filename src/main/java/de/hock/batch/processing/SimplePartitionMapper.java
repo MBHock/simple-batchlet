@@ -20,12 +20,8 @@ public class SimplePartitionMapper implements PartitionMapper {
     @Inject
     private JobContext jobContext;
 
-    //    @Inject
-//    @BatchProperty(name = "numberOfPartitions")
     private Integer numberOfPartition;
 
-    //    @Inject
-//    @BatchProperty(name = "outputDirectory")
     private String outputDirectory;
 
     @PostConstruct

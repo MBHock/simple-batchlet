@@ -2,6 +2,7 @@ package de.hock.batch.processing;
 
 import javax.batch.api.BatchProperty;
 import javax.batch.api.Batchlet;
+import javax.batch.runtime.BatchStatus;
 import javax.batch.runtime.context.JobContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -57,10 +58,9 @@ public class TestBatchlet implements Batchlet {
 
         int counter = 0;
         int limit = Integer.parseInt(lineNumbers);
-        while(counter < limit) {
 
+        while(counter < limit) {
             openWriter();
-            //openFile(counter);
 
             writeData(counter);
 
@@ -69,7 +69,8 @@ public class TestBatchlet implements Batchlet {
 
         closeBufferedWriter();
         logger.log(Level.INFO, "{0} line(s) has been written on file", counter);
-        return "COMPLETED";
+
+        return BatchStatus.COMPLETED.name();
 
     }
 
@@ -90,20 +91,6 @@ public class TestBatchlet implements Batchlet {
 
         writer.write(testdata);
     }
-
-//    private void openFile(int counter) throws IOException {
-//        logger.log(Level.FINER, "Count value {0}", counter);
-//
-//        if(counter == 0) {
-//
-//            writer = new BufferedWriter(new FileWriter(getOutfilename()));
-//
-//        }
-//        else if(counter % BLOCK_SIZE == 0) {
-//            closeBufferedWriter();
-//            writer = new BufferedWriter(new FileWriter(getOutfilename()));
-//        }
-//    }
 
     private void closeBufferedWriter() throws IOException {
         if(writer != null) {

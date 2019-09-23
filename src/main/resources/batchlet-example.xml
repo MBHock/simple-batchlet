@@ -7,7 +7,10 @@
         <property name="numberOfPartitions" value="10"/>
         <property name="numberOfLines" value="10000"/>
     </properties>
-    <step id="testBatchlet">
+    <listeners>
+        <listener ref="InfoJobListener"/>
+    </listeners>
+    <step id="testBatchlet" next="statistics">
         <batchlet ref="TestBatchlet">
             <properties>
                 <property name="outputFilename" value="#{partitionPlan['outputFilename']}"/>
@@ -16,6 +19,9 @@
         <partition>
             <mapper ref="simplePartitionMapper"/>
         </partition>
+    </step>
+    <step id="statistics">
+        <batchlet ref="StatisticsBatchlet"/>
     </step>
 
 </job>
