@@ -82,7 +82,7 @@ public class TestBatchlet implements Batchlet {
 
         try {
             LocalDateTime now = LocalDateTime.now();
-            writer.write(String.format("[%tF %tT]\twriting dummy line number (%06d).%n", now, now, counter));
+            writer.write(String.format("[%tF %tT]\twriting dummy line number (%010d).%n", now, now, counter));
             if(counter % 100 == 0) { // write an empty line
                 writer.write(String.format("%s%n", ""));
             }
