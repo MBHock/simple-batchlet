@@ -11,3 +11,5 @@ mvn exec:java -Dexec.arguments="batchlet-example jobParam1=x jobParam2=y jobPara
 
 java -jar target/batchProcessing.jar de.hock.batch.processing.JobStarter
 
+To run in debug mode:
+java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000 -jar target/batchProcessing.jar batchlet-example numberOfFiles=50 threadCount=5

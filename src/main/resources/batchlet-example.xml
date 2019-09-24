@@ -4,7 +4,8 @@
         <property name="outputDirectory" value="/Users/mojammalhock/tmp/out"/>
         <property name="inputDirectory" value="/Users/mojammalhock/tmp/in"/>
         <property name="logDirectory" value="/Users/mojammalhock/tmp/log"/>
-        <property name="numberOfPartitions" value="100"/>
+        <property name="numberOfFiles" value="100"/>
+        <property name="threadCount" value="10"/>
         <property name="numberOfLines" value="10000"/>
     </properties>
     <listeners>
@@ -14,6 +15,8 @@
         <batchlet ref="TestBatchlet">
             <properties>
                 <property name="outputFilename" value="#{partitionPlan['outputFilename']}"/>
+                <property name="startInclusive" value="#{partitionPlan['startInclusive']}"/>
+                <property name="endExclusive" value="#{partitionPlan['endExclusive']}"/>
             </properties>
         </batchlet>
         <partition>
@@ -23,5 +26,4 @@
     <step id="statistics">
         <batchlet ref="StatisticsBatchlet"/>
     </step>
-
 </job>

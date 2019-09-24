@@ -2,20 +2,25 @@ package de.hock.batch.processing;
 
 import javax.batch.api.BatchProperty;
 import javax.batch.api.Batchlet;
+import javax.batch.operations.BatchRuntimeException;
 import javax.batch.runtime.BatchStatus;
-import javax.batch.runtime.context.JobContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
+
+import static de.hock.batch.processing.BatchletProperties.END_EXCLUSIVE;
+import static de.hock.batch.processing.BatchletProperties.OUTPUT_FILENAME;
+import static de.hock.batch.processing.BatchletProperties.START_INCLUSIVE;
 
 /**
  * @author <a href="mailto:Mojammal.Hock@gmail.com">Mojammal Hock</a>
@@ -23,53 +28,43 @@ import java.util.logging.Logger;
 @Named(value = "TestBatchlet")
 public class TestBatchlet implements Batchlet {
 
-    private static final int BLOCK_SIZE = 2000;
-    private static final String OUT_FILENAME = "outputDirectory";
-    private static final String NUMBER_OF_LINES = "numberOfLines";
-
-    private static final LocalDateTime datetime = LocalDateTime.now();
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-    private static final DateTimeFormatter filenameformatter = DateTimeFormatter.ofPattern("yyyMMdd_HHmmss_SSS");
+//    private static final int BLOCK_SIZE = 2000;
+//    private static final DateTimeFormatter filenameformatter = DateTimeFormatter.ofPattern("yyyMMdd_HHmmss_SSS");
+//    private static final LocalDateTime datetime = LocalDateTime.now();
+//    private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+//    private AtomicInteger fileNumber = new AtomicInteger(0);
+//    @Inject
+//    private JobContext jobContext;
 
     private static final Random random = new Random();
     private static final Integer lowerBound = 1;
     private static final Integer higherBound = 100;
     private BufferedWriter writer = null;
-    private AtomicInteger fileNumber = new AtomicInteger(0);
-
-    @Inject
-    private JobContext jobContext;
 
     @Inject
     private Logger logger;
 
     @Inject
-    @BatchProperty(name = NUMBER_OF_LINES)
-    private Integer lineNumbers;
+    @BatchProperty(name = START_INCLUSIVE)
+    private Integer startInclusive;
 
     @Inject
-    @BatchProperty(name = "outputFilename")
+    @BatchProperty(name = END_EXCLUSIVE)
+    private Integer endExclusive;
+
+    @Inject
+    @BatchProperty(name = OUTPUT_FILENAME)
     private String fileName;
 
     @Override
     public String process() throws IOException {
-        String lineNumbers = jobContext.getProperties().getProperty(NUMBER_OF_LINES, "4000");
-        logger.log(Level.INFO, "Write {0} lines in file ...", lineNumbers);
+        logger.log(Level.INFO, "Dummy lines {0} to {1} will be written in file {2}", new Object[]{startInclusive, endExclusive, fileName});
 
-        int counter = 0;
-        int limit = Integer.parseInt(lineNumbers);
+        openWriter();
+        IntStream.range(startInclusive, endExclusive).boxed().forEach(this::writeData);
+        closeWriter();
 
-        while(counter < limit) {
-            openWriter();
-
-            writeData(counter);
-
-            counter++;
-        }
-
-        closeBufferedWriter();
-        logger.log(Level.INFO, "{0} line(s) has been written on file", counter);
-
+        logger.log(Level.FINE, String.format("%d number of line(s) has been written on file %s", Files.readAllLines(Paths.get(fileName)).size(), fileName));
         return BatchStatus.COMPLETED.name();
 
     }
@@ -80,43 +75,46 @@ public class TestBatchlet implements Batchlet {
         }
     }
 
-    private void writeData(int counter) throws IOException {
+    private void writeData(Integer counter) {
+//        int nextNumber = random.nextInt(higherBound - lowerBound) + lowerBound;
+//        if(nextNumber > 20) {
+//        }
 
-        int nextNumber = random.nextInt(higherBound - lowerBound) + lowerBound;
-        String testdata = String.format("%s%n", "");
-        if(nextNumber > 20) {
-            testdata = String.format("%s:   current line number is %d.%n", LocalDateTime.now().format(formatter),
-                    counter);
+        try {
+            LocalDateTime now = LocalDateTime.now();
+            writer.write(String.format("[%tF %tT]\twriting dummy line number (%06d).%n", now, now, counter));
+            if(counter % 100 == 0) { // write an empty line
+                writer.write(String.format("%s%n", ""));
+            }
         }
-
-        writer.write(testdata);
+        catch(IOException e) {
+            throw new BatchRuntimeException(e);
+        }
     }
 
-    private void closeBufferedWriter() throws IOException {
+    private void closeWriter() throws IOException {
         if(writer != null) {
             writer.close();
         }
     }
 
-    private synchronized File getOutfilename() {
-        File file = new File(jobContext.getProperties().getProperty(OUT_FILENAME),
-                "sampleout_" + datetime.format(filenameformatter) + ".txt");
-
-        if(file.exists()) {
-            file = new File(jobContext.getProperties().getProperty(OUT_FILENAME),
-                    "sampleout_" + datetime.format(filenameformatter) + "_" + fileNumber.incrementAndGet() + ".txt");
-        }
-
-        logger.log(Level.INFO, "The {0} file is created in the configured directory", file.getAbsolutePath());
-        return file;
-    }
+//    private synchronized File getOutfilename() {
+//        File file = new File(jobContext.getProperties().getProperty(OUT_FILENAME),
+//                "sampleout_" + datetime.format(filenameformatter) + ".txt");
+//
+//        if(file.exists()) {
+//            file = new File(jobContext.getProperties().getProperty(OUT_FILENAME),
+//                    "sampleout_" + datetime.format(filenameformatter) + "_" + fileNumber.incrementAndGet() + ".txt");
+//        }
+//
+//        logger.log(Level.INFO, "The {0} file is created in the configured directory", file.getAbsolutePath());
+//        return file;
+//    }
 
     @Override
     public void stop() throws Exception {
-        // do nothing
         if(writer != null) {
             writer.close();
         }
     }
-
 }
